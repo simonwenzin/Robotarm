@@ -14,6 +14,7 @@ for pin in servo_map.values():
     board.servo_config(pin, 544, 2400)
 
 def servo_move(servo, angle):
+    """Moves a specific servo a specified angle in degrees."""
     if servo is None:
         print(f"invalid servo: '{servo}'")
         return
