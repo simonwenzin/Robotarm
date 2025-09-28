@@ -2,8 +2,14 @@ import json
 import os
 import time
 from pyfirmata import Arduino
+from mock_board import MockBoard
 
-board = Arduino("/dev/ttyACM0")
+try:
+    board = Arduino("/dev/ttyACM0")
+except Exception:
+    print("board not found, running simulator")
+    board = MockBoard()
+
 servo_map = {
     "torso": {"pin": 2, "angle": 90},
     "shoulder": {"pin": 3, "angle": 90},
@@ -58,11 +64,14 @@ def run_file(filename):
         print(f"successfully ran '{filename}'")
 
 def main():
+    default_filename = "data.json"
+    filename = default_filename
+
     for pin in servo_map.values():
         board.servo_config(pin["pin"], 544, 2400)
 
     while True:
-        user_input = input("$ ").lower()
+        user_input = input(filename + "$ ").lower()
         user_inputs = user_input.split()
         command = user_inputs[0]
         if len(user_inputs) > 1:
@@ -70,7 +79,7 @@ def main():
         else:
             argument = None
 
-        if command == "quit":
+        if command == "quit" or command == "exit":
             break
 
         elif command == "reset":
@@ -80,10 +89,14 @@ def main():
 
         elif command == "save":
             data = servo_map
-            save_state(data, "data.json")
+            save_state(data, filename)
+
+        elif command == "load":
+            filename = argument
 
         elif command == "delete":
-            delete_file("data.json")
+            delete_file(filename)
+            filename = default_filename
 
         elif command == "run":
             run_file(argument)
