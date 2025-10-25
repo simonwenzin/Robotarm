@@ -2,11 +2,12 @@ import json
 import os
 import time
 from pyfirmata import Arduino
+from serial import SerialException
 from mock_board import MockBoard
 
 try:
     board = Arduino("/dev/ttyACM0")
-except Exception:
+except SerialException:
     print("board not found, running simulator")
     board = MockBoard()
 
@@ -19,17 +20,31 @@ servo_map = {
     "hand": {"pin": 7, "angle": 90},
 }
 
-def servo_move(servo, angle):
+STEP_SIZE = 1
+STEP_DELAY = 0.02
+
+def servo_move(servo, target_angle):
     """Moves a specific servo a specified angle in degrees."""
     if servo not in servo_map:
         print(f"invalid servo: '{servo}'")
         return
-    if not (0 <= angle <= 180):
-        print(f"invalid angle: '{angle}'")
+    if not (0 <= target_angle <= 180):
+        print(f"invalid angle: '{target_angle}'")
         return
-    board.digital[servo_map[servo]["pin"]].write(angle)
-    servo_map[servo]["angle"] = angle
-    print(f"moving servo '{servo}' to angle '{angle}'")
+
+    current_angle = servo_map[servo]["angle"]
+    if target_angle > current_angle:
+        step = STEP_SIZE
+    else:
+        step = -STEP_SIZE
+
+    for angle in range(current_angle, target_angle, step):
+        board.digital [servo_map[servo]["pin"]].write(angle)
+        time.sleep(STEP_DELAY)
+
+    board.digital[servo_map[servo]["pin"]].write(target_angle)
+    servo_map[servo]["angle"] = target_angle
+    print(f"moving servo '{servo}' to angle '{target_angle}'")
 
 def save_state(data, filename):
     """Saves current state to file."""
@@ -100,6 +115,22 @@ def main():
 
         elif command == "run":
             run_file(argument)
+
+        elif command == "help":
+            print("""
+┌─ Robot Arm Control ───────────────────────────┐
+│  [servo] [angle]        → move servo to angle │
+│  save                   → save current state  │
+│  run [file]             → run saved sequence  │
+│  load [file]            → switch save file    │
+│  delete [file]          → delete save file    │
+│  reset                  → reset all servos    │
+│  help                   → show this menu      │
+│  quit / exit            → close program       │
+└───────────────────────────────────────────────┘
+Servos: torso, shoulder, elbow, wrist-pitch, wrist-roll, hand
+Angles: 0–180°
+""")
 
         elif command in servo_map.keys():
             try:
