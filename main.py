@@ -1,7 +1,6 @@
 import json
 import os
-import time
-from pyfirmata import Arduino
+from pyfirmata2 import Arduino
 from serial import SerialException
 from mock_board import MockBoard
 
@@ -19,6 +18,8 @@ servo_map = {
     "wrist-roll": {"pin": 6, "angle": 90},
     "hand": {"pin": 7, "angle": 90},
 }
+
+servo_objects = {}
 
 STEP_SIZE = 1
 STEP_DELAY = 0.02
@@ -39,10 +40,10 @@ def servo_move(servo, target_angle):
         step = -STEP_SIZE
 
     for angle in range(current_angle, target_angle, step):
-        board.digital [servo_map[servo]["pin"]].write(angle)
-        time.sleep(STEP_DELAY)
+        servo_objects[servo].write(angle)
+        board.pass_time(STEP_DELAY)
 
-    board.digital[servo_map[servo]["pin"]].write(target_angle)
+    servo_objects[servo].write(target_angle)
     servo_map[servo]["angle"] = target_angle
     print(f"moving servo '{servo}' to angle '{target_angle}'")
 
@@ -82,8 +83,11 @@ def main():
     default_filename = "data.json"
     filename = default_filename
 
-    for pin in servo_map.values():
-        board.servo_config(pin["pin"], 544, 2400)
+    for name, data in servo_map.items():
+        pin = data["pin"]
+        servo_objects[name] = board.get_pin(f"d:{pin}:s")
+        board.servo_config(pin, 544, 2400)
+        board.pass_time(0.05)
 
     while True:
         user_input = input(filename + "$ ").lower()
@@ -98,23 +102,34 @@ def main():
             break
 
         elif command == "reset":
-            for pin in servo_map.values():
-                board.digital[pin["pin"]].write(90)
-                time.sleep(0.5)
+            for servo in servo_map.keys():
+                servo_move(servo, 90)
+                servo_map[servo]["angle"] = 90
+                board.pass_time(0.5)
 
         elif command == "save":
             data = servo_map
             save_state(data, filename)
 
         elif command == "load":
-            filename = argument
+            if argument is None:
+                print("no file provided")
+            else:
+                filename = argument
 
         elif command == "delete":
-            delete_file(filename)
-            filename = default_filename
+            if argument is None:
+                print("no file provided")
+            else:
+                delete_file(argument)
+                if argument == filename:
+                    filename = default_filename
 
         elif command == "run":
-            run_file(argument)
+            if argument is None:
+                print("no file provided")
+            else:
+                run_file(argument)
 
         elif command == "help":
             print("""
@@ -134,9 +149,8 @@ Angles: 0–180°
 
         elif command in servo_map.keys():
             try:
-                if command in servo_map:
-                    argument = int(argument)
-                    servo_move(command, argument)
+                argument = int(argument)
+                servo_move(command, argument)
 
             except ValueError:
                 print(f"invalid syntax: '{user_input}'")
