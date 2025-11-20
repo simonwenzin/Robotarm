@@ -1,4 +1,6 @@
 # mock_board.py
+import time
+
 class MockServo:
     def __init__(self, pin):
         self.pin = pin
@@ -23,6 +25,12 @@ class MockBoard:
         if pin_type == 's':
             return MockServo(pin_def)
         raise NotImplementedError
+    
+    def pass_time(self, t):
+        """Non-blocking time-out for ``t`` seconds."""
+        cont = time.time() + t
+        while time.time() < cont:
+            time.sleep(0)
 
     def servo_config(self, pin, min_pulse=544, max_pulse=2400, angle=0):
         print(f"[SIM] successfully configured pin {pin}")

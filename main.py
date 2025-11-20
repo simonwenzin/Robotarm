@@ -39,13 +39,14 @@ def servo_move(servo, target_angle):
     else:
         step = -STEP_SIZE
 
+    print(f"moving servo '{servo}' to angle '{target_angle}'")
+
     for angle in range(current_angle, target_angle, step):
         servo_objects[servo].write(angle)
         board.pass_time(STEP_DELAY)
 
     servo_objects[servo].write(target_angle)
     servo_map[servo]["angle"] = target_angle
-    print(f"moving servo '{servo}' to angle '{target_angle}'")
 
 def save_state(data, filename):
     """Saves current state to file."""
