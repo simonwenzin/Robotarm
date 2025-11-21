@@ -1,14 +1,15 @@
 import json
 import os
-from pyfirmata2 import Arduino
-from serial import SerialException
-from mock_board import MockBoard
 
-try:
-    board = Arduino("/dev/ttyACM0")
-except SerialException:
-    print("board not found, running simulator")
+USE_SIM = True   # toggle simulator
+
+if USE_SIM:
+    from mock_board import MockBoard
     board = MockBoard()
+    print("[SIM] Using simulator")
+else:
+    from pyfirmata2 import Arduino
+    board = Arduino("/dev/ttyACM0")
 
 servo_map = {
     "torso": {"pin": 2, "angle": 90},
@@ -99,7 +100,8 @@ def main():
         else:
             argument = None
 
-        if command == "quit" or command == "exit":
+        if command in ["quit", "exit", "kys", "bye"]:
+            board.exit()
             break
 
         elif command == "reset":
@@ -132,6 +134,10 @@ def main():
             else:
                 run_file(argument)
 
+        elif command == "state":
+            for name, angle in servo_map.items():
+                print(f"{name}: {servo_map[name]['angle']}")
+
         elif command == "help":
             print("""
 ┌─ Robot Arm Control ───────────────────────────┐
@@ -142,6 +148,7 @@ def main():
 │  delete [file]          → delete save file    │
 │  reset                  → reset all servos    │
 │  help                   → show this menu      │
+│  state                  → displays servo state│
 │  quit / exit            → close program       │
 └───────────────────────────────────────────────┘
 Servos: torso, shoulder, elbow, wrist-pitch, wrist-roll, hand
