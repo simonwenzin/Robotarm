@@ -1,5 +1,6 @@
-import json
-import os
+import time
+
+from file_manager import FileManager
 
 USE_SIM = True   # toggle simulator
 
@@ -44,52 +45,31 @@ def servo_move(servo, target_angle):
 
     for angle in range(current_angle, target_angle, step):
         servo_objects[servo].write(angle)
-        board.pass_time(STEP_DELAY)
+        time.sleep(STEP_DELAY)
 
     servo_objects[servo].write(target_angle)
     servo_map[servo]["angle"] = target_angle
 
-def save_state(data, filename):
-    """Saves current state to file."""
-    state = load_state(filename)
-    state.append(data)
-    with open(filename, "wt") as f:
-        json.dump(state, f)
-    print(f"saved '{filename}'")
-
-def load_state(filename):
-    """Loads state from file."""
-    try:
-        with open(filename, "rt") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return []
-
-def delete_file(filename):
-    """Deletes file."""
-    os.remove(filename)
-    print(f"deleted '{filename}'")
-
-def run_file(filename):
+def run_commands(commands):
     """Runs file."""
-    commands = load_state(filename)
     for command in commands:
         for servo in command.keys():
             servo_move(servo, command[servo]["angle"])
     if len(commands) == 0:
-        print(f"no commands found in '{filename}'")
+        print(f"no commands found")
     else:
-        print(f"successfully ran '{filename}'")
+        print(f"successfully ran")
 
 def main():
     default_filename = "data.json"
     filename = default_filename
+    file = FileManager(filename)
 
     for name, data in servo_map.items():
         pin = data["pin"]
         servo_objects[name] = board.get_pin(f"d:{pin}:s")
         board.servo_config(pin, 544, 2400)
-        board.pass_time(0.05)
+        time.sleep(0.05)
 
     while True:
         user_input = input(filename + "$ ").lower()
@@ -108,23 +88,24 @@ def main():
             for servo in servo_map.keys():
                 servo_move(servo, 90)
                 servo_map[servo]["angle"] = 90
-                board.pass_time(0.5)
+                time.sleep(0.5)
 
         elif command == "save":
             data = servo_map
-            save_state(data, filename)
+            file.save_state(data)
 
         elif command == "load":
             if argument is None:
                 print("no file provided")
             else:
                 filename = argument
+                file = FileManager(filename)
 
         elif command == "delete":
             if argument is None:
                 print("no file provided")
             else:
-                delete_file(argument)
+                FileManager(argument).delete()
                 if argument == filename:
                     filename = default_filename
 
@@ -132,7 +113,8 @@ def main():
             if argument is None:
                 print("no file provided")
             else:
-                run_file(argument)
+                commands = FileManager(filename).load_state()
+                run_commands(commands)
 
         elif command == "state":
             for name, angle in servo_map.items():
