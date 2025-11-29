@@ -26,15 +26,8 @@ class Robot:
             time.sleep(0.05)
 
     def servo_move(self, servo, target_angle):
-        """Moves a specific servo a specified angle in degrees."""
-        if servo not in self.servo_map:
-            print(f"invalid servo: '{servo}'")
-            return
-        if not (0 <= target_angle <= 180):
-            print(f"invalid angle: '{target_angle}'")
-            return
-
         current_angle = self.servo_map[servo]["angle"]
+
         if target_angle > current_angle:
             step = self.STEP_SIZE
         else:

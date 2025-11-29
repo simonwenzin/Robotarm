@@ -63,11 +63,13 @@ Angles: 0–180°
 
         elif command in robot.get_servo_map().keys():
             try:
-                robot.servo_move(command, int(argument))
-
+                angle = int(argument)
+                if 0 <= angle <= 180:
+                    robot.servo_move(command, angle)
+                else:
+                    print(f"invalid angle: '{angle}'")
             except ValueError:
                 print(f"invalid syntax: '{user_input}'")
-
         else:
             print(f"invalid command: '{command}'")
 
