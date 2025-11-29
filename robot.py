@@ -2,17 +2,8 @@ import time
 
 
 class Robot:
-    def __init__(self):
-        USE_SIM = True  # toggle simulator
-
-        if USE_SIM:
-            from mock_board import MockBoard
-            self.board = MockBoard()
-            print("[SIM] Using simulator")
-        else:
-            from pyfirmata2 import Arduino
-            self.board = Arduino("/dev/ttyACM0")
-
+    def __init__(self, board):
+        self.board = board
         self.servo_map = {
             "torso": {"pin": 2, "angle": 90},
             "shoulder": {"pin": 3, "angle": 90},

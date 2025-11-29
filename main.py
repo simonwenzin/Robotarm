@@ -1,3 +1,4 @@
+from board_factory import create_board
 from file_manager import FileManager
 from robot import Robot
 
@@ -5,7 +6,7 @@ def main():
     default_filename = "data.json"
     filename = default_filename
     file = FileManager(filename)
-    robot = Robot()
+    robot = Robot(create_board())
     robot.configure()
 
     while True:
