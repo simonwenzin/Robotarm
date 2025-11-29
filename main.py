@@ -10,7 +10,7 @@ def main():
     robot.configure()
 
     while True:
-        user_input = input(filename + "$ ").lower()
+        user_input = input(f"robotarm/{filename}$ ").lower()
         user_inputs = user_input.split()
         command = user_inputs[0]
         if len(user_inputs) > 1:
@@ -29,27 +29,17 @@ def main():
             data = robot.get_servo_map()
             file.save_state(data)
 
-        elif command == "load":
-            if argument is None:
-                print("no file provided")
-            else:
-                filename = argument
-                file = FileManager(filename)
+        elif command == "select":
+            filename = argument
+            file = FileManager(filename)
 
         elif command == "delete":
-            if argument is None:
-                print("no file provided")
-            else:
-                FileManager(argument).delete()
-                if argument == filename:
-                    filename = default_filename
+            file.delete()
+            filename = default_filename
+            file = FileManager(filename)
 
         elif command == "run":
-            if argument is None:
-                print("no file provided")
-            else:
-                commands = FileManager(filename).load_state()
-                robot.run_commands(commands)
+            robot.run_commands(file.load_state())
 
         elif command == "state":
             robot.print_state()
@@ -59,9 +49,9 @@ def main():
 ┌─ Robot Arm Control ───────────────────────────┐
 │  [servo] [angle]        → move servo to angle │
 │  save                   → save current state  │
-│  run [file]             → run saved sequence  │
-│  load [file]            → switch save file    │
-│  delete [file]          → delete save file    │
+│  run                    → run saved sequence  │
+│  select [file]          → switch save file    │
+│  delete                 → delete save file    │
 │  reset                  → reset all servos    │
 │  help                   → show this menu      │
 │  state                  → displays servo state│
