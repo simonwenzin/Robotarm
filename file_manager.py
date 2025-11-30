@@ -4,7 +4,7 @@ import os
 
 class FileManager:
 
-    def __init__(self, filename):
+    def __init__(self, filename="data.json"):
         self.filename = filename
 
     def save_state(self, data):

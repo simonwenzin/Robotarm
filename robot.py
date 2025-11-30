@@ -2,6 +2,7 @@ import time
 
 
 class Robot:
+
     def __init__(self, board):
         self.board = board
         self.servo_map = {

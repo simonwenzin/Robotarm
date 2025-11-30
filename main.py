@@ -5,9 +5,7 @@ from robot_shell import RobotShell
 
 
 def main():
-    default_filename = "data.json"
-    filename = default_filename
-    file = FileManager(filename)
+    file = FileManager()
     robot = Robot(create_board())
     robot.configure()
     shell = RobotShell(robot, file)

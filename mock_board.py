@@ -1,7 +1,5 @@
-# mock_board.py
-import time
-
 class MockServo:
+
     def __init__(self, pin):
         self.pin = pin
         self.angle = 0
@@ -11,10 +9,12 @@ class MockServo:
         self.angle = angle
 
 class MockPin:
+
     def __init__(self, pin):
         self.pin = pin
 
 class MockBoard:
+
     def __init__(self):
         self.analog = []
         self.digital = [None,None,MockPin(2),MockPin(3),MockPin(4),MockPin(5),MockPin(6),MockPin(7)]

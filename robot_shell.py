@@ -35,8 +35,12 @@ class RobotShell(cmd.Cmd):
 
     def do_delete(self, _arg):
         """Deletes selected file"""
-        self.file.delete()
-        self.file = FileManager(self.DEFAULT_FILENAME)
+        try:
+            self.file.delete()
+            self.file = FileManager()
+            self.prompt = "robotarm/data.json$ "
+        except FileNotFoundError:
+            print("File not found.")
 
     def do_run(self, _arg):
         """Runs commands from selected file"""
