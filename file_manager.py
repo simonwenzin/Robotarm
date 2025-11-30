@@ -24,3 +24,6 @@ class FileManager:
     def delete(self):
         os.remove(self.filename)
         print(f"deleted '{self.filename}'")
+
+    def get_filename(self):
+        return self.filename
