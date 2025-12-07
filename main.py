@@ -8,8 +8,7 @@ def main():
     file = FileManager()
     robot = Robot(create_board())
     robot.configure()
-    shell = RobotShell(robot, file)
-    shell.cmdloop()
+    RobotShell(robot, file).cmdloop()
 
 if __name__ == "__main__":
     main()

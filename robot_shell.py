@@ -46,6 +46,18 @@ class RobotShell(cmd.Cmd):
         """Runs commands from selected file"""
         self.robot.run_commands(self.file.load_state())
 
+    def do_loop(self, arg):
+        """Loops commands from selected file"""
+        try:
+            arg = int(arg)
+        except ValueError:
+            print(f"Invalid argument: '{arg}'")
+            return
+        if not 1 <= arg:
+            print(f"Invalid argument: '{arg}'")
+            return
+        self.robot.loop(self.file.load_state(), arg)
+
     def do_state(self, _arg):
         """Prints the current state of the robot"""
         self.robot.print_state()
@@ -53,7 +65,7 @@ class RobotShell(cmd.Cmd):
     def do_move(self, args):
         """Move servo to angle"""
         if len(args.split()) != 2:
-            print(f"invalid argument: {args}")
+            print(f"invalid argument: '{args}'")
             return
         servo, angle = args.split()
         valid_servo = validate_servo(servo, self.robot.servo_map.keys())

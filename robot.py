@@ -17,7 +17,7 @@ class Robot:
         self.servo_objects = {}
 
         self.STEP_SIZE = 1
-        self.STEP_DELAY = 0.02
+        self.STEP_DELAY = 0.002
 
     def configure(self):
         for name, data in self.servo_map.items():
@@ -52,10 +52,18 @@ class Robot:
         for command in commands:
             for servo in command.keys():
                 self.servo_move(servo, command[servo]["angle"])
+                time.sleep(0.1)
+            time.sleep(1)
+
         if len(commands) == 0:
             print(f"no commands found")
         else:
             print(f"successfully ran")
+
+    def loop(self, file, repetitions):
+        for repetition in range(repetitions):
+            self.run_commands(file)
+            time.sleep(1)
 
     def get_servo_map(self):
         return self.servo_map
