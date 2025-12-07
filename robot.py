@@ -28,13 +28,10 @@ class Robot:
 
     def servo_move(self, servo, target_angle):
         current_angle = self.servo_map[servo]["angle"]
-
         if target_angle > current_angle:
             step = self.STEP_SIZE
         else:
             step = -self.STEP_SIZE
-
-        print(f"moving servo '{servo}' to angle '{target_angle}'")
 
         for angle in range(current_angle, target_angle, step):
             self.servo_objects[servo].write(angle)
@@ -56,9 +53,9 @@ class Robot:
             time.sleep(1)
 
         if len(commands) == 0:
-            print(f"no commands found")
+            print("No commands found")
         else:
-            print(f"successfully ran")
+            print("Successfully ran")
 
     def loop(self, file, repetitions):
         for repetition in range(repetitions):

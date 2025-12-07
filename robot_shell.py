@@ -13,6 +13,13 @@ class RobotShell(cmd.Cmd):
         self.file = file
         self.intro = "Welcome to the HOLMES IV robot control system."
         self.prompt = f"robotarm/{file.get_filename()}$ "
+        self.misc_header = "Additional information:"
+
+    def help_servos(self):
+        print("Available servos:")
+        for name in self.robot.servo_map.keys():
+            print(f" -{name}")
+        print("Valid angles: 0 - 180")
 
     def do_exit(self, _arg):
         """Exits the program."""
@@ -53,7 +60,7 @@ class RobotShell(cmd.Cmd):
         except ValueError:
             print(f"Invalid argument: '{arg}'")
             return
-        if not 1 <= arg:
+        if arg < 1:
             print(f"Invalid argument: '{arg}'")
             return
         self.robot.loop(self.file.load_state(), arg)
@@ -65,18 +72,19 @@ class RobotShell(cmd.Cmd):
     def do_move(self, args):
         """Move servo to angle"""
         if len(args.split()) != 2:
-            print(f"invalid argument: '{args}'")
+            print(f"Invalid argument: '{args}'")
             return
         servo, angle = args.split()
         valid_servo = validate_servo(servo, self.robot.servo_map.keys())
         valid_angle = parse_angle(angle)
         if not valid_servo:
-            print(f"invalid servo: '{servo}'")
+            print(f"Invalid servo: '{servo}'")
             return
-        if not valid_angle:
-            print(f"invalid angle: '{angle}'")
+        if valid_angle is None:
+            print(f"Invalid angle: '{angle}'")
             return
 
+        print(f"Moving servo '{servo}' to angle '{angle}'")
         self.robot.servo_move(valid_servo, valid_angle)
 
 def validate_servo(arg, valid_servos):

@@ -28,7 +28,7 @@ class MockBoard:
         raise NotImplementedError
 
     def servo_config(self, pin, min_pulse=544, max_pulse=2400, angle=0):
-        print(f"[SIM] successfully configured pin {pin}")
+        print(f"[SIM] Successfully configured pin {pin}")
 
     def exit(self):
         print("[SIM] Closing mock board")

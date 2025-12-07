@@ -12,7 +12,7 @@ class FileManager:
         state.append(data)
         with open(self.filename, "wt") as f:
             json.dump(state, f)
-        print(f"saved '{self.filename}'")
+        print(f"Saved '{self.filename}'")
 
     def load_state(self):
         try:
@@ -23,7 +23,7 @@ class FileManager:
 
     def delete(self):
         os.remove(self.filename)
-        print(f"deleted '{self.filename}'")
+        print(f"Deleted '{self.filename}'")
 
     def get_filename(self):
         return self.filename
