@@ -23,6 +23,7 @@ class RobotShell(cmd.Cmd):
 
     def do_exit(self, _arg):
         """Exits the program."""
+        print("TANSTAAFL!")
         self.robot.exit()
         exit()
 
@@ -87,11 +88,13 @@ class RobotShell(cmd.Cmd):
         print(f"Moving servo '{servo}' to angle '{angle}'")
         self.robot.servo_move(valid_servo, valid_angle)
 
+
 def validate_servo(arg, valid_servos):
     if arg in valid_servos:
         return arg
     else:
         return None
+
 
 def parse_angle(arg):
     try:

@@ -1,7 +1,7 @@
 def create_board():
-    USE_SIM = True  # toggle simulator
+    use_sim = True  # toggle simulator
 
-    if USE_SIM:
+    if use_sim:
         from mock_board import MockBoard
         print("[SIM] Using simulator")
         return MockBoard()

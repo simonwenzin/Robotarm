@@ -8,16 +8,18 @@ class MockServo:
         print(f"[SIM] Moving servo on pin {self.pin} to angle {angle}")
         self.angle = angle
 
+
 class MockPin:
 
     def __init__(self, pin):
         self.pin = pin
 
+
 class MockBoard:
 
     def __init__(self):
         self.analog = []
-        self.digital = [None,None,MockPin(2),MockPin(3),MockPin(4),MockPin(5),MockPin(6),MockPin(7)]
+        self.digital = [None, None, MockPin(2), MockPin(3), MockPin(4), MockPin(5), MockPin(6), MockPin(7)]
         self.sp = None  # serial port placeholder
 
     def get_pin(self, pin_def):
@@ -27,7 +29,7 @@ class MockBoard:
             return MockServo(pin_def)
         raise NotImplementedError
 
-    def servo_config(self, pin, min_pulse=544, max_pulse=2400, angle=0):
+    def servo_config(self, pin):
         print(f"[SIM] Successfully configured pin {pin}")
 
     def exit(self):
