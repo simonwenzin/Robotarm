@@ -53,6 +53,7 @@ class RobotShell(cmd.Cmd):
     def do_run(self, _arg):
         """Runs commands from selected file"""
         self.robot.run_commands(self.file.load_state())
+        print(self.robot.run_commands(self.file.load_state()))
 
     def do_loop(self, arg):
         """Loops commands from selected file"""

@@ -53,9 +53,9 @@ class Robot:
             time.sleep(1)
 
         if len(commands) == 0:
-            print("No commands found")
+            return "No commands found"
         else:
-            print("Successfully ran")
+            return "Successfully ran"
 
     def loop(self, file, repetitions):
         for repetition in range(repetitions):

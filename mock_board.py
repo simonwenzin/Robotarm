@@ -29,7 +29,7 @@ class MockBoard:
             return MockServo(pin_def)
         raise NotImplementedError
 
-    def servo_config(self, pin):
+    def servo_config(self, pin, _min_pulse, _max_pulse):
         print(f"[SIM] Successfully configured pin {pin}")
 
     def exit(self):
